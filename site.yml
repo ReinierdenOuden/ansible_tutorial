@@ -56,6 +56,22 @@
          - libapache2-mod-php
        state: latest
      when: ansible_distribution == "Ubuntu"
+
+   - name: change e-mail address for admin
+     tags: apache,ubuntu,httpd
+     lineinfile:
+       path: /etc/apache2/sites-available/000-default.conf
+       regexp: 'ServerAdmin'
+       line: ServerAdmin reinier@somewhere.net
+     when: ansible_distribution == "Ubuntu"
+     register: httpd
+ 
+   - name: restart httpd (Ubuntu)
+     tags: apache,centos,httpd
+     service:
+       name: apache2
+       state: restarted
+     when: httpd.changed   
  
    - name: copy html file for site
      tags: apache,apache,apache2,httpd
@@ -73,10 +89,18 @@
    - name: install mariadb server package (CentOS)
      tags: centos,db,mariadb
      dnf:
-       name: mariadb
+       name: mariadb-server
        state: latest
      when: ansible_distribution == "CentOS"
- 
+
+   - name: Start mariadb server (CentOS)
+     tags: centos,db,mariadb
+     service:
+       name: mariadb
+       state: started
+       enabled: yes
+     when: ansible_distribution == "CentOS"
+
    - name: install mariadb server
      tags: db,mariadb,ubuntu
      apt:
