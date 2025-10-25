@@ -1,2 +1,8 @@
+[web_servers]
 server1
+
+[file_servers]
 server2
+
+[db_servers]
+server3
